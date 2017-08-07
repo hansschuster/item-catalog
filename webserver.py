@@ -1,6 +1,17 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
 
+# Database imports
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Restaurant, MenuItem
+
+# Accessing Database with ORM
+engine = create_engine('sqlite:///restaurantmenu.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind = engine)
+session = DBSession()
+
 
 class webServerHandler(BaseHTTPRequestHandler):
 
@@ -28,6 +39,23 @@ class webServerHandler(BaseHTTPRequestHandler):
                 output += "<h1>&#161 Hola !</h1>"
                 output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><h2>What would you like me to say?</h2><input name="message" type="text" ><input type="submit" value="Submit"> </form>'''
                 output += "</body></html>"
+                self.wfile.write(output)
+                print output
+                return
+
+            if self.path.endswith("/restaurants"):
+                restaurants = session.query(Restaurant).all()
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                o_restaurants = ""
+                for r in restaurants:
+                    o_restaurants += (
+                        r.name + "<br>"
+                        + "<a href='/%s/edit'>Edit</a><br>" % (r.id,)
+                        + "<a href='/%s/delete'>Delete</a><br>" % (r.id,))
+                output = (
+                    "<html><body>" + o_restaurants + "</body></html>")
                 self.wfile.write(output)
                 print output
                 return
