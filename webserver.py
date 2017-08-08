@@ -1,5 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
+import re
 
 # Database imports
 from sqlalchemy import create_engine
@@ -53,23 +54,63 @@ class webServerHandler(BaseHTTPRequestHandler):
                 print output
                 return
 
+            p = re.compile(r'\/restaurants\/(\d+)\/edit')
+            if p.match(self.path):
+                r_id = p.search(self.path).group(1)
+                restaurant = session.query(Restaurant).filter(Restaurant.id
+                                                              ==r_id)
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                output = (
+                    '<html><body><h1>{0}</h1><br><form '
+                    'action="/restaurants/edit" method="post" '
+                    'enctype="multipart/form-data"><label '
+                    'for="r_name">Name:</label><input '
+                    'id="r_name" type="text" name="name" '
+                    'placeholder="My new name"><input '
+                    'id="r_id" type="hidden" name="r_id" '
+                    'value="{1}"><input type="submit" '
+                    'value="Save"></form></body></html>'
+                    .format(restaurant[0].name, r_id))
+                self.wfile.write(output)
+                print output
+                return
+
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
 
     def do_POST(self):
         try:
-            self.send_response(303)
-            self.send_header('Content-type', 'text/html')
-            self.send_header('Location', '/restaurants')
-            self.end_headers()
-            ctype, pdict = cgi.parse_header(
-                self.headers.getheader('content-type'))
-            if ctype == 'multipart/form-data':
-                fields = cgi.parse_multipart(self.rfile, pdict)
-                r_name = fields.get('name')
-                new_restaurant = Restaurant(name = r_name[0])
-                session.add(new_restaurant)
-                session.commit()
+            if (self.path.endswith('/restaurants/add')):
+                self.send_response(303)
+                self.send_header('Content-type', 'text/html')
+                self.send_header('Location', '/restaurants')
+                self.end_headers()
+                ctype, pdict = cgi.parse_header(
+                    self.headers.getheader('content-type'))
+                if ctype == 'multipart/form-data':
+                    fields = cgi.parse_multipart(self.rfile, pdict)
+                    r_name = fields.get('name')
+                    new_restaurant = Restaurant(name = r_name[0])
+                    session.add(new_restaurant)
+                    session.commit()
+
+            if (self.path.endswith('/restaurants/edit')):
+                self.send_response(303)
+                self.send_header('Content-type', 'text/html')
+                self.send_header('Location', '/restaurants')
+                self.end_headers()
+                ctype, pdict = cgi.parse_header(
+                    self.headers.getheader('content-type'))
+                if ctype == 'multipart/form-data':
+                    fields = cgi.parse_multipart(self.rfile, pdict)
+                    r_name = fields.get('name')[0]
+                    r_id = fields.get('r_id')[0]
+                    upd_restaurant = (session.query(Restaurant)
+                                      .filter(Restaurant.id==r_id).first())
+                    upd_restaurant.name = r_name
+                    session.commit()
         except:
             pass
 
