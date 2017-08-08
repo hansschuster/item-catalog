@@ -77,6 +77,25 @@ class webServerHandler(BaseHTTPRequestHandler):
                 print output
                 return
 
+            p = re.compile(r'\/restaurants\/(\d+)\/delete')
+            if p.match(self.path):
+                r_id = p.search(self.path).group(1)
+                restaurant = session.query(Restaurant).filter(Restaurant.id
+                                                              ==r_id)
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                output = (
+                    '<html><body><h3>Are your sure you want to delete '
+                    '{0}?</h3><br><form action="/restaurants/delete" '
+                    'method="post" enctype="multipart/form-data"><input '
+                    'id="r_id" type="hidden" name="r_id" value="{1}"><input '
+                    'type="submit" value="Delete"></form></body></html>'
+                    .format(restaurant[0].name, r_id))
+                self.wfile.write(output)
+                print output
+                return
+
         except IOError:
             self.send_error(404, 'File Not Found: %s' % self.path)
 
@@ -111,6 +130,22 @@ class webServerHandler(BaseHTTPRequestHandler):
                                       .filter(Restaurant.id==r_id).first())
                     upd_restaurant.name = r_name
                     session.commit()
+            
+            if (self.path.endswith('/restaurants/delete')):
+                self.send_response(303)
+                self.send_header('Content-type', 'text/html')
+                self.send_header('Location', '/restaurants')
+                self.end_headers()
+                ctype, pdict = cgi.parse_header(
+                    self.headers.getheader('content-type'))
+                if ctype == 'multipart/form-data':
+                    fields = cgi.parse_multipart(self.rfile, pdict)
+                    r_id = fields.get('r_id')[0]
+                    del_restaurant = (session.query(Restaurant)
+                                      .filter(Restaurant.id==r_id).first())
+                    session.delete(del_restaurant)
+                    session.commit()
+
         except:
             pass
 
