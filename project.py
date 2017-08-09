@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, url_for
 app = Flask(__name__)
 
 # Database imports
@@ -18,12 +18,7 @@ session = DBSession()
 def restaurantMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
-    output = ''
-    for i in items:
-        output += i.name + '<br>'
-        output += i.price + '<br>'
-        output += i.description + '<br><br>'
-    return output
+    return render_template('menu.html', restaurant=restaurant, items=items)
 
 
 # Add menu item for specific restaurant
