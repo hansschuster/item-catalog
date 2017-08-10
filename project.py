@@ -85,6 +85,14 @@ def restaurantMenuJSON(restaurant_id):
     return jsonify(MenuItems=[i.serialize for i in items])
 
 
+# Send JSON data for specific menu item of specific restaurant
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/JSON/')
+def menuItemJSON(restaurant_id, menu_id):
+    item = session.query(MenuItem).filter_by(restaurant_id=restaurant_id,
+                                             id=menu_id).one()
+    return jsonify(MenuItem=item.serialize)
+
+
 if __name__ == '__main__':
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
