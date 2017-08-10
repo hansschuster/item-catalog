@@ -1,5 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
-app = Flask(__name__)
+from flask import Flask, render_template, url_for, request, redirect, flash
 
 # Database imports
 from sqlalchemy import create_engine
@@ -11,6 +10,9 @@ engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 session = DBSession()
+
+app = Flask(__name__)
+app.secret_key = 'super_secret_key'
 
 
 # Show menu items for specific restaurant
@@ -29,6 +31,7 @@ def newMenuItem(restaurant_id):
                            restaurant_id=restaurant_id)
         session.add(new_item)
         session.commit()
+        flash('New menu item created')
         return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     else:
         return render_template('new_menu_item.html',
