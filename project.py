@@ -1,4 +1,5 @@
-from flask import Flask, render_template, url_for, request, redirect, flash
+from flask import (Flask, render_template, url_for, request, redirect, flash,
+                   jsonify)
 
 # Database imports
 from sqlalchemy import create_engine
@@ -19,7 +20,8 @@ app.secret_key = 'super_secret_key'
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
+    items = (session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
+             .all())
     return render_template('menu.html', restaurant=restaurant, items=items)
 
 
@@ -73,6 +75,14 @@ def deleteMenuItem(restaurant_id, menu_id):
                                restaurant_id=restaurant_id,
                                menu_id=menu_id,
                                delete_item=delete_item)
+
+
+# Send JSON data for menu items of specific restaurant
+@app.route('/restaurants/<int:restaurant_id>/JSON/')
+def restaurantMenuJSON(restaurant_id):
+    items = (session.query(MenuItem).filter_by(restaurant_id=restaurant_id)
+             .all())
+    return jsonify(MenuItems=[i.serialize for i in items])
 
 
 if __name__ == '__main__':
