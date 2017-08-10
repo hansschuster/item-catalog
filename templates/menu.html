@@ -1,6 +1,9 @@
 <html>
-  <body>
+<head>
+  <link rel='stylesheet' href='{{url_for("static", filename="app.css")}}'>
+</head>
 
+<body>
   <h1>{{restaurant.name}}</h1>
 
   <!--MESSAGE FLASHING EXAMPLE -->
@@ -29,5 +32,5 @@
     </div>
   {% endfor %}
 
-  </body>
+</body>
 </html>
