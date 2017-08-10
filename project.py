@@ -44,10 +44,12 @@ def newMenuItem(restaurant_id):
 def editMenuItem(restaurant_id, menu_id):
     edit_item = session.query(MenuItem).filter_by(id = menu_id).one()
     if request.method == 'POST':
+        old_name = edit_item.name
         if request.form['name']:
             edit_item.name = request.form['name']
         session.add(edit_item)
         session.commit()
+        flash('Changed name from {} to {}'.format(old_name, edit_item.name))
         return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     else:
         return render_template('edit_menu_item.html',
@@ -64,6 +66,7 @@ def deleteMenuItem(restaurant_id, menu_id):
     if request.method == 'POST':
         session.delete(delete_item)
         session.commit()
+        flash('Deleted item with name {}'.format(delete_item.name))
         return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     else:
         return render_template('delete_menu_item.html',
