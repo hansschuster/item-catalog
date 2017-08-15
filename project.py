@@ -29,6 +29,13 @@ def newRestaurant():
     return render_template('new_restaurant.html')
 
 
+# Edit specified restaurant
+@app.route('/restaurants/<int:restaurant_id>/edit/')
+def editRestaurant(restaurant_id):
+    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    return render_template('edit_restaurant.html', restaurant=restaurant)
+
+
 # Show menu items for specific restaurant
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
@@ -43,7 +50,7 @@ def restaurantMenu(restaurant_id):
 def newMenuItem(restaurant_id):
     if request.method == 'POST':
         new_item = MenuItem(name=request.form['name'],
-                           restaurant_id=restaurant_id)
+                            restaurant_id=restaurant_id)
         session.add(new_item)
         session.commit()
         flash('New menu item created')
