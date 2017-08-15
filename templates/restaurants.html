@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Restaurant Menus</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='app.css')}}">
+  </head>
+  <body>
+    <section class="header">
+      <h1 class="header__h">Restaurants</h1>
+    </section>
+
+    <section class="main">
+      <div class="button">
+        <a class="button__a" href="#">Add restaurant</a>
+      </div>
+
+      <div class="items">
+        {% for r in restaurants %}
+          <div class="items__item">
+            <h3 class="items__h">{{r.name}}</h3>
+            <div class="items__links">
+              <a class="items__a" href="{{url_for('restaurantMenu', restaurant_id=r.id)}}">Menu</a>
+              <a class="items__a" href="#">Edit</a>
+              <a class="items__a" href="#">Delete</a>
+            </div>
+          </div>
+        {% endfor %}
+        <div class="items__item items__flex-fill">
+
+        </div>
+        <div class="items__item items__flex-fill">
+
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
