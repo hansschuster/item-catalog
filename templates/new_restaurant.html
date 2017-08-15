@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Restaurant</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='app.css')}}">
+  </head>
+  <body>
+    <section class="header">
+      <h1 class="header__h">Add Restaurant</h1>
+    </section>
+
+    <section class="main">
+      <form class="add-item" action="{{url_for('newRestaurant')}}" method="post">
+        <div class="add-item__name">
+          <label class="add-item__name-label" for="name">Name: </label>
+          <input class="add-item__name-input" id='name' type='text' name='name'>
+        </div>
+        <div class="add-item__actions">
+          <button class="add-item__button">Add</button>
+          <a class="add-item__cancel" href="#">Cancel</a>
+        </div>
+      </form>
+    </section>
+  </body>
+</html>
