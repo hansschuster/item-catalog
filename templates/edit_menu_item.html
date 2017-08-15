@@ -1,12 +1,26 @@
+<!doctype html>
 <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Menu Item</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='app.css')}}">
+  </head>
   <body>
-    <h1>Edit Menu Item</h1>
+    <section class="header">
+      <h1 class="header__h">Edit Menu Item</h1>
+    </section>
 
-    <form action='{{url_for("editMenuItem", restaurant_id=restaurant_id, menu_id=menu_id)}}' method = 'POST'>
-      <label for='name'>Name:</label><br>
-      <input id='name' type='text' size='30' name='name' placeholder='{{edit_item.name}}'>
-      <button>Edit</button>
-      <a href='{{url_for("restaurantMenu", restaurant_id=restaurant_id)}}'>Cancel</a>
-    </form>
+    <section class="main">
+      <form class="add-item" action="{{url_for("editMenuItem", restaurant_id=restaurant_id, menu_id=menu_id)}}" method="post">
+        <div class="add-item__name">
+          <label class="add-item__name-label" for="name">Name: </label>
+          <input class="add-item__name-input" id='name' type='text' name='name' placeholder="{{edit_item.name}}">
+        </div>
+        <div class="add-item__actions">
+          <button class="add-item__button">Edit</button>
+          <a class="add-item__cancel" href="{{url_for("restaurantMenu", restaurant_id=restaurant_id)}}">Cancel</a>
+        </div>
+      </form>
+    </section>
   </body>
 </html>

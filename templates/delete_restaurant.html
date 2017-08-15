@@ -14,8 +14,6 @@
       <form class="add-item" action="{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}" method="post">
         <div class="add-item__name">
           Delete {{restaurant.name}}?
-          <!-- <label class="add-item__name-label" for="name">Name: </label>
-          <input class="add-item__name-input" id='name' type='text' name='name' placeholder="{{restaurant.name}}"> -->
         </div>
         <div class="add-item__actions">
           <button class="add-item__button add-item__button--red">Delete</button>
