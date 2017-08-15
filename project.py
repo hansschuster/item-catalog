@@ -23,6 +23,12 @@ def restaurants():
     return render_template('restaurants.html', restaurants=restaurants)
 
 
+# Add new restaurant
+@app.route('/restaurants/new/')
+def newRestaurant():
+    return render_template('new_restaurant.html')
+
+
 # Show menu items for specific restaurant
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
