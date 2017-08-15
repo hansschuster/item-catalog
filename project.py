@@ -16,6 +16,13 @@ app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 
 
+# Show restaurants
+@app.route('/restaurants/')
+def restaurants():
+    restaurants = session.query(Restaurant).all()
+    return render_template('restaurants.html', restaurants=restaurants)
+
+
 # Show menu items for specific restaurant
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
