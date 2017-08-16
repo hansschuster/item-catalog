@@ -1,36 +1,59 @@
+<!doctype html>
 <html>
-<head>
-  <link rel='stylesheet' href='{{url_for("static", filename="app.css")}}'>
-</head>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{restaurant.name}} Menu</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='app.css')}}">
+  </head>
+  <body>
+    <section class="header">
+      <h1 class="header__h">{{restaurant.name}}</h1>
+    </section>
 
-<body>
-  <h1>{{restaurant.name}}</h1>
-
-  <!--MESSAGE FLASHING EXAMPLE -->
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-      {% for message in messages %}
-        <li><strong>{{ message }}</strong></li>
-      {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-
-  <p>
-    <a href='{{url_for("newMenuItem", restaurant_id=restaurant.id)}}'>Create New Item</a>
-  </p>
-
-  {% for i in items %}
-    <div>
-      {{i.name}}<br>
-      {{i.description}}<br>
-      {{i.price}}<br>
-      <a href='{{url_for("editMenuItem", restaurant_id=restaurant.id, menu_id=i.id)}}'>Edit</a><br>
-      <a href='{{url_for("deleteMenuItem", restaurant_id=restaurant.id, menu_id=i.id)}}'>Delete</a><br>
-      <br>
+    <div class="back">
+      <a class="back__a" href="{{url_for('restaurants')}}">← Back to Restaurants</a>
     </div>
-  {% endfor %}
 
-</body>
+            <!--MESSAGE FLASHING EXAMPLE -->
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul>
+                {% for message in messages %}
+                  <li><strong>{{ message }}</strong></li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+    <section class="main">
+      <div class="button">
+        <a class="button__a" href="{{url_for("newMenuItem", restaurant_id=restaurant.id)}}">Add Menu Item</a>
+      </div>
+
+      <div class="items">
+        {% for i in items %}
+          <div class="items__item">
+            <h3 class="items__h">{{i.name}}</h3>
+            <div class="items__sec-line">
+              <span>{{i.course}}</span>
+              <span>{{i.price}}</span>
+            </div>
+            <p class="items__description">
+              {{i.description}}
+            </p>
+            <div class="items__links">
+              <a class="items__a add-item__button" href="{{url_for("editMenuItem", restaurant_id=restaurant.id, menu_id=i.id)}}">Edit</a>
+              <a class="items__a add-item__button" href="{{url_for("deleteMenuItem", restaurant_id=restaurant.id, menu_id=i.id)}}">Delete</a>
+            </div>
+          </div>
+        {% endfor %}
+        <div class="items__item items__flex-fill">
+
+        </div>
+        <div class="items__item items__flex-fill">
+
+        </div>
+      </div>
+    </section>
+  </body>
 </html>
