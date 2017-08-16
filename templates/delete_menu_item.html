@@ -12,7 +12,7 @@
 
     <section class="main">
       <form class="add-item" action="{{url_for("deleteMenuItem", restaurant_id=restaurant_id, menu_id=menu_id)}}" method="post">
-        <div class="add-item__name">
+        <div class="add-item__name add-item__last">
           Delete {{delete_item.name}}?
         </div>
         <div class="add-item__actions">

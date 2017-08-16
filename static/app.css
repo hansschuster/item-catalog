@@ -111,12 +111,19 @@ a:hover {
 }
 
 .add-item__name {
-  border-bottom: 1px solid #e5e5e5;
   padding-bottom: 10px;
   height: 46px;
   display: flex;
   font-size: 24px;
   line-height: 46px;
+}
+
+.add-item__last {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.add-item__desc {
+  height: 100px;
 }
 
 .add-item__name-label {

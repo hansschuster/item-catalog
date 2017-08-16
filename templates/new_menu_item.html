@@ -16,6 +16,18 @@
           <label class="add-item__name-label" for="name">Name: </label>
           <input class="add-item__name-input" id='name' type='text' name='name'>
         </div>
+        <div class="add-item__name">
+          <label class="add-item__name-label" for="price">Price: </label>
+          <input class="add-item__name-input" id='price' type='text' name='price'>
+        </div>
+        <div class="add-item__name">
+          <label class="add-item__name-label" for="course">Course: </label>
+          <input class="add-item__name-input" id='course' type='text' name='course'>
+        </div>
+        <div class="add-item__name add-item__last add-item__desc">
+          <label class="add-item__name-label" for="description">Description: </label>
+          <textarea class="add-item__name-input" id='description' name='description'></textarea>
+        </div>
         <div class="add-item__actions">
           <button class="add-item__button">Add</button>
           <a class="add-item__cancel" href="{{url_for("restaurantMenu", restaurant_id=restaurant_id)}}">Cancel</a>
