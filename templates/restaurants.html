@@ -21,8 +21,8 @@
             <h3 class="items__h">{{r.name}}</h3>
             <div class="items__links">
               <a class="items__a" href="{{url_for('restaurantMenu', restaurant_id=r.id)}}">Menu</a>
-              <a class="items__a" href="#">Edit</a>
-              <a class="items__a" href="#">Delete</a>
+              <a class="items__a" href="{{url_for('editRestaurant', restaurant_id=r.id)}}">Edit</a>
+              <a class="items__a" href="{{url_for('deleteRestaurant', restaurant_id=r.id)}}">Delete</a>
             </div>
           </div>
         {% endfor %}
