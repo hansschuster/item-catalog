@@ -6,6 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 
+# Imports for login
+from flask import session as login_session
+import random, string
+
 # Accessing Database with ORM
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
@@ -158,6 +162,16 @@ def menuItemJSON(restaurant_id, menu_id):
     item = session.query(MenuItem).filter_by(restaurant_id=restaurant_id,
                                              id=menu_id).one()
     return jsonify(MenuItem=item.serialize)
+
+
+# Create pseudo-random state token to make sure the user is making the request
+@app.route('/login')
+def login():
+    state = ''.join(random.choice(string.ascii_lowercase +
+                                  string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    return "The current session state is %s" % login_session['state']
 
 
 if __name__ == '__main__':
