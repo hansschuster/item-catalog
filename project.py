@@ -171,7 +171,7 @@ def login():
                                   string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    return render_template('login.html')
+    return render_template('login.html', STATE=state)
 
 
 if __name__ == '__main__':
