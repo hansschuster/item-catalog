@@ -194,6 +194,10 @@ a:hover {
   color: #a82c50;
 }
 
+.button_hide {
+  display: none;
+}
+
 
 /*** Back ***/
 .back {
