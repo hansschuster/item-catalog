@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem, User
 
 # Imports for login, authorization...
-from flask import session as login_session, make_response
+from flask import session as login_session, make_response, abort
 import random, string, httplib2, json, requests
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 
@@ -35,6 +35,8 @@ def restaurants():
 # Add new restaurant
 @app.route('/restaurants/new/', methods=['GET', 'POST'])
 def newRestaurant():
+    if 'username' not in login_session:
+        abort(403)
     if request.method == 'POST':
         new_restaurant = Restaurant(name=request.form['name'],
                                     user_id=login_session['user_id'])
@@ -50,6 +52,8 @@ def newRestaurant():
 @app.route('/restaurants/<int:restaurant_id>/edit/', methods=['GET', 'POST'])
 def editRestaurant(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    if restaurant.user_id != login_session['user_id']:
+        abort(403)
     if request.method == 'POST':
         old_name = restaurant.name
         if request.form['name']:
@@ -67,6 +71,8 @@ def editRestaurant(restaurant_id):
 @app.route('/restaurants/<int:restaurant_id>/delete/', methods=['GET', 'POST'])
 def deleteRestaurant(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    if restaurant.user_id != login_session['user_id']:
+        abort(403)
     if request.method == 'POST':
         session.delete(restaurant)
         session.commit()
@@ -88,6 +94,8 @@ def restaurantMenu(restaurant_id):
 # Add menu item for specific restaurant
 @app.route('/restaurants/<int:restaurant_id>/new/', methods=['GET', 'Post'])
 def newMenuItem(restaurant_id):
+    if 'username' not in login_session:
+        abort(403)
     if request.method == 'POST':
         new_item = MenuItem(name=request.form['name'],
                             restaurant_id=restaurant_id,
@@ -109,6 +117,8 @@ def newMenuItem(restaurant_id):
           methods = ['GET', 'POST'])
 def editMenuItem(restaurant_id, menu_id):
     edit_item = session.query(MenuItem).filter_by(id = menu_id).one()
+    if edit_item.user_id != login_session['user_id']:
+        abort(403)
     if request.method == 'POST':
         old_name = edit_item.name
         if request.form['name']:
@@ -136,6 +146,8 @@ def editMenuItem(restaurant_id, menu_id):
            methods = ['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
     delete_item = session.query(MenuItem).filter_by(id = menu_id).one()
+    if delete_item.user_id != login_session['user_id']:
+        abort(403)
     if request.method == 'POST':
         session.delete(delete_item)
         session.commit()
@@ -308,15 +320,17 @@ def gdisconnect():
     print login_session['username']
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
     h = httplib2.Http()
-    result = h.request(url, 'GET')[0]
+    result = h.request(url, 'GET')
     print 'result is '
-    print result
-    if result['status'] == '200':
+    print result[0]['status']
+    print json.loads(result[1]).get('error')
+    if result[0]['status'] == '200' or json.loads(result[1]).get('error') == 'invalid_token':
         del login_session['access_token']
         del login_session['gplus_id']
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        del login_session['user_id']
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
