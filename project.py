@@ -36,7 +36,8 @@ def restaurants():
 @app.route('/restaurants/new/', methods=['GET', 'POST'])
 def newRestaurant():
     if request.method == 'POST':
-        new_restaurant = Restaurant(name=request.form['name'])
+        new_restaurant = Restaurant(name=request.form['name'],
+                                    user_id=login_session['user_id'])
         session.add(new_restaurant)
         session.commit()
         flash('New restaurant created!')
@@ -92,7 +93,8 @@ def newMenuItem(restaurant_id):
                             restaurant_id=restaurant_id,
                             price=request.form['price'],
                             course=request.form['course'],
-                            description=request.form['description'])
+                            description=request.form['description'],
+                            user_id=login_session['user_id'])
         session.add(new_item)
         session.commit()
         flash('New menu item created')
@@ -252,6 +254,12 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
     print login_session['username'], data
+
+    # Create User if not existent
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        createUser(login_session)
+    login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
