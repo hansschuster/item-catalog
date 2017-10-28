@@ -8,6 +8,7 @@
   <body>
     <section class="header">
       <h1 class="header__h">{{restaurant.name}}</h1>
+      <a href="{{url_for(url_to)}}" class="header__a">{{button_text}}</a>
     </section>
 
     <div class="back">
@@ -41,7 +42,7 @@
             <p class="items__description">
               {{i.description}}
             </p>
-            <div class="items__links">
+            <div class="items__links {% if i.user_id != user_id %}hide{% endif %}">
               <a class="items__a add-item__button" href="{{url_for("editMenuItem", restaurant_id=restaurant.id, menu_id=i.id)}}">Edit</a>
               <a class="items__a add-item__button" href="{{url_for("deleteMenuItem", restaurant_id=restaurant.id, menu_id=i.id)}}">Delete</a>
             </div>

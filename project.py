@@ -28,12 +28,19 @@ APPLICATION_NAME = "Test Menu App"
 # Show restaurants
 @app.route('/restaurants/')
 def restaurants():
-    button_hide = ''
-    if 'username' not in login_session:
-        button_hide = 'button_hide'
+    button_hide = 'hide'
+    user_id = ''
+    url_to = 'login'
+    button_text = 'Login'
+    if 'username' in login_session:
+        button_hide = ''
+        user_id = login_session['user_id']
+        url_to = 'gdisconnect'
+        button_text = 'Logout'
     restaurants = session.query(Restaurant).all()
     return render_template('restaurants.html', restaurants=restaurants,
-                           button_hide=button_hide)
+                           button_hide=button_hide, user_id=user_id,
+                           url_to=url_to, button_text=button_text)
 
 
 # Add new restaurant
@@ -89,14 +96,21 @@ def deleteRestaurant(restaurant_id):
 # Show menu items for specific restaurant
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
-    button_hide = ''
-    if 'username' not in login_session:
-        button_hide = 'button_hide'
+    button_hide = 'hide'
+    user_id = ''
+    url_to = 'login'
+    button_text = 'Login'
+    if 'username' in login_session:
+        button_hide = ''
+        user_id = login_session['user_id']
+        url_to = 'gdisconnect'
+        button_text = 'Logout'
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     items = (session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
              .all())
     return render_template('menu.html', restaurant=restaurant, items=items,
-                           button_hide=button_hide)
+                           button_hide=button_hide, user_id=user_id,
+                           url_to=url_to, button_text=button_text)
 
 
 # Add menu item for specific restaurant
