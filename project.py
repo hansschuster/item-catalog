@@ -14,6 +14,7 @@ import httplib2
 import json
 import requests
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+from functools import wraps
 
 # Accessing Database with ORM
 engine = create_engine('sqlite:///restaurantmenu.db')
@@ -27,6 +28,16 @@ app.secret_key = 'super_secret_key'
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Test Menu App"
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in login_session:
+            return f(*args, **kwargs)
+        flash("You are not allowed to access there! Please log in first!")
+        return redirect(url_for('login'))
+    return decorated_function
 
 
 # Show restaurants
@@ -49,9 +60,8 @@ def restaurants():
 
 # Add new restaurant
 @app.route('/restaurants/new/', methods=['GET', 'POST'])
+@login_required
 def newRestaurant():
-    if 'username' not in login_session:
-        abort(403)
     if request.method == 'POST':
         new_restaurant = Restaurant(name=request.form['name'],
                                     user_id=login_session['user_id'])
@@ -65,6 +75,7 @@ def newRestaurant():
 
 # Edit specified restaurant
 @app.route('/restaurants/<int:restaurant_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def editRestaurant(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     if restaurant.user_id != login_session['user_id']:
@@ -84,6 +95,7 @@ def editRestaurant(restaurant_id):
 
 # Delete specified restaurant
 @app.route('/restaurants/<int:restaurant_id>/delete/', methods=['GET', 'POST'])
+@login_required
 def deleteRestaurant(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     if restaurant.user_id != login_session['user_id']:
@@ -119,9 +131,8 @@ def restaurantMenu(restaurant_id):
 
 # Add menu item for specific restaurant
 @app.route('/restaurants/<int:restaurant_id>/new/', methods=['GET', 'Post'])
+@login_required
 def newMenuItem(restaurant_id):
-    if 'username' not in login_session:
-        abort(403)
     if request.method == 'POST':
         new_item = MenuItem(name=request.form['name'],
                             restaurant_id=restaurant_id,
@@ -141,6 +152,7 @@ def newMenuItem(restaurant_id):
 # Edit menu item
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',
            methods=['GET', 'POST'])
+@login_required
 def editMenuItem(restaurant_id, menu_id):
     edit_item = session.query(MenuItem).filter_by(id=menu_id).one()
     if edit_item.user_id != login_session['user_id']:
@@ -170,6 +182,7 @@ def editMenuItem(restaurant_id, menu_id):
 # Delete menu item
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/',
            methods=['GET', 'POST'])
+@login_required
 def deleteMenuItem(restaurant_id, menu_id):
     delete_item = session.query(MenuItem).filter_by(id=menu_id).one()
     if delete_item.user_id != login_session['user_id']:
