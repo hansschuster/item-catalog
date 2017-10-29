@@ -79,7 +79,8 @@ def newRestaurant():
 def editRestaurant(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     if restaurant.user_id != login_session['user_id']:
-        abort(403)
+        flash("That restaurant belongs to another user! Editing not allowed.")
+        return redirect(url_for('restaurants'))
     if request.method == 'POST':
         old_name = restaurant.name
         if request.form['name']:
@@ -99,7 +100,8 @@ def editRestaurant(restaurant_id):
 def deleteRestaurant(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     if restaurant.user_id != login_session['user_id']:
-        abort(403)
+        flash("That restaurant belongs to another user! Deleting not allowed.")
+        return redirect(url_for('restaurants'))
     if request.method == 'POST':
         session.delete(restaurant)
         session.commit()
@@ -156,7 +158,8 @@ def newMenuItem(restaurant_id):
 def editMenuItem(restaurant_id, menu_id):
     edit_item = session.query(MenuItem).filter_by(id=menu_id).one()
     if edit_item.user_id != login_session['user_id']:
-        abort(403)
+        flash("That menu item belongs to another user! Editing not allowed.")
+        return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     if request.method == 'POST':
         old_name = edit_item.name
         if request.form['name']:
@@ -186,7 +189,8 @@ def editMenuItem(restaurant_id, menu_id):
 def deleteMenuItem(restaurant_id, menu_id):
     delete_item = session.query(MenuItem).filter_by(id=menu_id).one()
     if delete_item.user_id != login_session['user_id']:
-        abort(403)
+        flash("That menu item belongs to another user! Deleting not allowed.")
+        return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     if request.method == 'POST':
         session.delete(delete_item)
         session.commit()
