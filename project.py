@@ -8,13 +8,17 @@ from database_setup import Base, Restaurant, MenuItem, User
 
 # Imports for login, authorization...
 from flask import session as login_session, make_response, abort
-import random, string, httplib2, json, requests
+import random
+import string
+import httplib2
+import json
+import requests
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 
 # Accessing Database with ORM
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
-DBSession = sessionmaker(bind = engine)
+DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 app = Flask(__name__)
@@ -136,9 +140,9 @@ def newMenuItem(restaurant_id):
 
 # Edit menu item
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',
-          methods = ['GET', 'POST'])
+           methods=['GET', 'POST'])
 def editMenuItem(restaurant_id, menu_id):
-    edit_item = session.query(MenuItem).filter_by(id = menu_id).one()
+    edit_item = session.query(MenuItem).filter_by(id=menu_id).one()
     if edit_item.user_id != login_session['user_id']:
         abort(403)
     if request.method == 'POST':
@@ -165,9 +169,9 @@ def editMenuItem(restaurant_id, menu_id):
 
 # Delete menu item
 @app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/',
-           methods = ['GET', 'POST'])
+           methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
-    delete_item = session.query(MenuItem).filter_by(id = menu_id).one()
+    delete_item = session.query(MenuItem).filter_by(id=menu_id).one()
     if delete_item.user_id != login_session['user_id']:
         abort(403)
     if request.method == 'POST':
@@ -215,6 +219,7 @@ def login():
     return render_template('login.html', STATE=state)
 
 
+# Connect with Google OAuth2
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -301,7 +306,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += (' " style = "width: 300px; height: 300px;border-radius: 150px;'
+               '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> ')
     flash("you are now logged in as {}".format(login_session['username']))
     print "done!"
     return output
@@ -329,24 +335,28 @@ def getUserID(email):
         return None
 
 
+# Logout, revoke token
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps('Current user not connected.'),
+                                 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = ('https://accounts.google.com/o/oauth2/revoke?token={}'
+           .format(login_session['access_token']))
     h = httplib2.Http()
     result = h.request(url, 'GET')
     print 'result is '
     print result[0]['status']
     print json.loads(result[1]).get('error')
-    if result[0]['status'] == '200' or json.loads(result[1]).get('error') == 'invalid_token':
+    if (result[0]['status'] == '200' or
+            json.loads(result[1]).get('error') == 'invalid_token'):
         del login_session['access_token']
         del login_session['gplus_id']
         del login_session['username']
@@ -357,11 +367,12 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(json.dumps('Failed to revoke token for given '
+                                            'user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host = '0.0.0.0', port = 5000)
+    app.run(host='0.0.0.0', port=5000)

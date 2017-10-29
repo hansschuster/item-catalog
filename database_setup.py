@@ -1,3 +1,4 @@
+# Setup for database with tables for users, restaurants and menu items
 import os
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -7,12 +8,13 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+
 class User(Base):
     __tablename__ = 'user'
 
-    id = Column(Integer, primary_key = True)
-    name = Column(String(80), nullable = False)
-    email = Column(String(80), nullable = False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
+    email = Column(String(80), nullable=False)
     picture = Column(String(250))
 
     # Serialize function: Send JSON objects in a serializable format
@@ -43,11 +45,12 @@ class Restaurant(Base):
             'user_id': self.user_id
         }
 
+
 class MenuItem(Base):
     __tablename__ = 'menu_item'
 
-    id = Column(Integer, primary_key = True)
-    name = Column(String(80), nullable = False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False)
     description = Column(String(250))
     price = Column(String(8))
     course = Column(String(250))
