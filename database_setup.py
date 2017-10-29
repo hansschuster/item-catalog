@@ -39,7 +39,8 @@ class Restaurant(Base):
     def serialize(self):
         return {
             'name': self.name,
-            'id': self.id
+            'id': self.id,
+            'user_id': self.user_id
         }
 
 class MenuItem(Base):
@@ -64,7 +65,8 @@ class MenuItem(Base):
             'id': self.id,
             'price': self.price,
             'course': self.course,
-            'restaurant_id': self.restaurant_id
+            'restaurant_id': self.restaurant_id,
+            'user_id': self.user_id
         }
 
 
