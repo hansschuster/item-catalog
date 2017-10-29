@@ -7,6 +7,17 @@
     <!-- END FOR GOOGLE SIGN IN -->
   </head>
   <body>
+    <!--MESSAGE FLASHING EXAMPLE -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li><strong>{{ message }}</strong></li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
     <!-- GOOGLE SIGN IN BUTTON-->
     <div id="signinButton">
       <span class="g-signin"
@@ -22,6 +33,8 @@
     <!--END GOOGLE SIGN IN BUTTON -->
 
     <div id="result"></div>
+
+    <a href="{{url_for('restaurants')}}">Go to restaurants page</a>
 
     <script>
       function signInCallback(authResult) {
