@@ -282,7 +282,7 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print "Token's client ID does not match app's."
+        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -309,7 +309,7 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
-    print login_session['username'], data
+    print(login_session['username'], data)
 
     # Create User if not existent
     user_id = getUserID(login_session['email'])
@@ -326,7 +326,7 @@ def gconnect():
     output += (' " style = "width: 300px; height: 300px;border-radius: 150px;'
                '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> ')
     flash("you are now logged in as {}".format(login_session['username']))
-    print "done!"
+    print("done!")
     return output
 
 
@@ -357,21 +357,21 @@ def getUserID(email):
 def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
-        print 'Access Token is None'
+        print('Access Token is None')
         response = make_response(json.dumps('Current user not connected.'),
                                  401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    print 'In gdisconnect access token is %s', access_token
-    print 'User name is: '
-    print login_session['username']
+    print('In gdisconnect access token is %s', access_token)
+    print('User name is: ')
+    print(login_session['username'])
     url = ('https://accounts.google.com/o/oauth2/revoke?token={}'
            .format(login_session['access_token']))
     h = httplib2.Http()
     result = h.request(url, 'GET')
-    print 'result is '
-    print result[0]['status']
-    print json.loads(result[1]).get('error')
+    print('result is ')
+    print(result[0]['status'])
+    print(json.loads(result[1]).get('error'))
     if (result[0]['status'] == '200' or
             json.loads(result[1]).get('error') == 'invalid_token'):
         del login_session['access_token']
@@ -391,5 +391,4 @@ def gdisconnect():
 
 
 if __name__ == '__main__':
-    app.debug = True
     app.run(host='0.0.0.0', port=5000)
